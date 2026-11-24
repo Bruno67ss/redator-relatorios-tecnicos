@@ -1,0 +1,262 @@
+[
+  {
+    "arquivo": ".env.example",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": ".gitignore",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": ".streamlit/config.toml",
+    "tratamento": "adaptado de fonte revisada",
+    "base": ".streamlit/config.toml"
+  },
+  {
+    "arquivo": "README.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "app.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "app.py"
+  },
+  {
+    "arquivo": "config/profile.example.json",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/AUDIO.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/AUDITORIA.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/DEPENDENCIAS.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/MANIFESTO.json",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/PRIVACIDADE.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "docs/REVISAO_PUBLICACAO.md",
+    "tratamento": "recriado",
+    "base": "revisão para registro e envio privado"
+  },
+  {
+    "arquivo": "docs/VALIDACAO.md",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "local/.gitkeep",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "pyproject.toml",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "redator/__init__.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "redator/audio.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/audio.py"
+  },
+  {
+    "arquivo": "redator/audio_ui.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/audio_ui.py"
+  },
+  {
+    "arquivo": "redator/case_support.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/case_support.py"
+  },
+  {
+    "arquivo": "redator/demo.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "redator/documents.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/documents.py"
+  },
+  {
+    "arquivo": "redator/domain.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/domain.py"
+  },
+  {
+    "arquivo": "redator/editorial.py",
+    "tratamento": "recriado",
+    "base": "orientação genérica nova de autoria e fidelidade"
+  },
+  {
+    "arquivo": "redator/filenames.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/filenames.py"
+  },
+  {
+    "arquivo": "redator/flow.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/flow.py"
+  },
+  {
+    "arquivo": "redator/labels.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/labels.py"
+  },
+  {
+    "arquivo": "redator/narrative.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/narrative.py"
+  },
+  {
+    "arquivo": "redator/openai_service.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/openai_service.py"
+  },
+  {
+    "arquivo": "redator/privacy.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/privacy.py"
+  },
+  {
+    "arquivo": "redator/report.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/report.py"
+  },
+  {
+    "arquivo": "redator/settings.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/settings.py"
+  },
+  {
+    "arquivo": "redator/support_ui.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/support_ui.py"
+  },
+  {
+    "arquivo": "redator/terminology.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "package/terminology.py"
+  },
+  {
+    "arquivo": "redator/word_pdf.py",
+    "tratamento": "código funcional preservado",
+    "base": "conversor local revisado"
+  },
+  {
+    "arquivo": "requirements-dev-lock.txt",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "requirements-lock.txt (without unused document inspection tool)"
+  },
+  {
+    "arquivo": "requirements-dev.txt",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "requirements-runtime-lock.txt",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "requirements-runtime-lock.txt"
+  },
+  {
+    "arquivo": "requirements.txt",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "scripts/audit_public.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/__init__.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/conftest.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/scenarios.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/test_app.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_app.py"
+  },
+  {
+    "arquivo": "tests/test_audio.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_audio.py"
+  },
+  {
+    "arquivo": "tests/test_case_support.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_case_support.py"
+  },
+  {
+    "arquivo": "tests/test_documents.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/test_domain.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/test_filenames.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_filenames.py"
+  },
+  {
+    "arquivo": "tests/test_narrative.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_narrative.py"
+  },
+  {
+    "arquivo": "tests/test_openai_service.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_openai_service.py"
+  },
+  {
+    "arquivo": "tests/test_public_audit.py",
+    "tratamento": "recriado",
+    "base": "conteúdo novo"
+  },
+  {
+    "arquivo": "tests/test_report.py",
+    "tratamento": "adaptado de fonte revisada",
+    "base": "tests/test_report.py"
+  }
+]

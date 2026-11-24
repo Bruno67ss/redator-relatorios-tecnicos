@@ -12,9 +12,10 @@ def test_duplicate_serials_are_normalized_before_validation():
     with pytest.raises(ValueError, match="repetidos"):
         case.validate_identity()
 
-def test_missing_registration_prevents_emission():
+@pytest.mark.parametrize("field", ["requester", "city", "responsible"])
+def test_missing_registration_prevents_emission(field):
     with pytest.raises(ValueError, match="Preencha"):
-        replace(demo_case(), requester="").validate_identity()
+        replace(demo_case(), **{field: " "}).validate_identity()
 
 def test_generic_equipment_uses_distinct_natural_references():
     identities = (Identity("E1", "Controlador", "", "Sintético A", "SINT-A"),

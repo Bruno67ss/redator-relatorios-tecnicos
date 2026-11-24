@@ -13,7 +13,7 @@ resultado observado e reparo apenas recomendado. Não consulta manuais nem produ
 
 ## Funcionalidades
 
-- Cadastro de solicitante, setor e vários equipamentos, com tipo, lado opcional, modelo e série.
+- Cadastro de solicitante, setor, cidade, responsável pelo relatório e vários equipamentos, com tipo, lado opcional, modelo e série.
 - Avaliação única por texto, gravação no navegador ou arquivo de áudio.
 - Transcrição pela OpenAI; redação nos formatos Objetivo e Detalhado.
 - Ajuda opcional para organizar o relato e esclarecer até três lacunas.
@@ -68,8 +68,12 @@ Reinicie o aplicativo após configurar. Não coloque credenciais em código, cap
 O áudio usa `gpt-transcribe` independentemente do modelo de redação; disponibilidade e custos precisam
 ser conferidos na conta antes de uso real. Nenhuma chamada real é necessária para a demonstração textual.
 
-Para personalizar cidade, responsável e cargo, copie `config/profile.example.json` para
-`local/profile.json`. Esse arquivo fica fora do versionamento. O modelo Word neutro é construído
+Cidade e responsável pelo relatório são editáveis em **1. Identificação**; a data é preenchida
+automaticamente. Esses dados ficam na sessão e são inseridos localmente no Word e no PDF, sem
+serem anexados à entrada enviada à IA. Alterá-los exige gerar, revisar e aprovar novamente o relatório.
+Para definir valores iniciais de cidade e responsável e configurar o cargo, copie
+`config/profile.example.json` para `local/profile.json`. As edições na interface não alteram esse
+arquivo, que fica fora do versionamento. O modelo Word neutro é construído
 em `local/template-neutro.docx` no primeiro uso. Não distribua templates institucionais ou de terceiros.
 
 ## Demonstração com dados fictícios
@@ -109,7 +113,7 @@ não certifica reparos e não substitui normas, manuais autorizados ou conhecime
 
 Os testes usam dados sintéticos, respostas simuladas e transporte HTTP em memória. A suíte bloqueia
 rede externa e limpa a chave do ambiente. Não há scripts de demonstração que façam chamadas pagas.
-Validação local: **139 testes aprovados**, servidor em loopback e DOCX/PDF sintéticos verificados.
+Validação local: **153 testes aprovados**, servidor em loopback e DOCX/PDF sintéticos verificados.
 Veja [resultados da validação](docs/VALIDACAO.md), [auditoria](docs/AUDITORIA.md), [privacidade](docs/PRIVACIDADE.md) e
 [dependências e titularidade](docs/DEPENDENCIAS.md).
 

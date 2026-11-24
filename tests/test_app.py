@@ -1,4 +1,6 @@
 from pathlib import Path
+from datetime import date
+from io import BytesIO
 import json
 import os
 from types import SimpleNamespace
@@ -13,6 +15,10 @@ import streamlit as st
 from streamlit.delta_generator import DeltaGenerator
 import httpx
 from openai import InternalServerError
+from docx import Document
+from redator.demo import demo_case
+from redator.documents import format_location_date
+from redator.settings import load_profile
 
 
 def find(elements, label):
@@ -49,6 +55,78 @@ def test_registration_has_one_shared_assessment_and_one_audio_control():
     assert app.session_state["equipment_ids"] == ["E1", "E2", "E3"]
     assert len(app.text_area) == 1 and len(app.audio_input) == 1
     assert not app.exception
+
+
+def test_identification_uses_profile_defaults_without_persisting_edits(tmp_path):
+    folder = tmp_path / "local"
+    folder.mkdir()
+    path = folder / "profile.json"
+    saved = json.dumps({"city": "Cidade Inicial", "responsible": "Responsável Inicial"})
+    path.write_text(saved, encoding="utf-8")
+    with patch("redator.settings.load_profile", side_effect=lambda root: load_profile(tmp_path)):
+        app = new_app()
+        assert find(app.text_input, "Cidade").value == "Cidade Inicial"
+        assert find(app.text_input, "Responsável pelo relatório").value == "Responsável Inicial"
+        find(app.text_input, "Cidade").set_value("Outra Cidade").run()
+        find(app.text_input, "Responsável pelo relatório").set_value("Outro Responsável").run()
+        assert not app.exception
+        assert path.read_text(encoding="utf-8") == saved
+        assert any(f"Data do relatório: {date.today():%d/%m/%Y}" == c.value for c in app.caption)
+        fresh = new_app()
+        assert find(fresh.text_input, "Cidade").value == "Cidade Inicial"
+        assert find(fresh.text_input, "Responsável pelo relatório").value == "Responsável Inicial"
+        find(app.button, "Nova avaliação").click().run()
+        assert find(app.text_input, "Cidade").value == "Cidade Inicial"
+        assert find(app.text_input, "Responsável pelo relatório").value == "Responsável Inicial"
+        assert not app.exception
+
+
+@pytest.mark.parametrize("field,label", [("city", "Cidade"), ("responsible", "Responsável pelo relatório")])
+@pytest.mark.parametrize("stage", ["generated", "approved", "exported"])
+def test_identification_edits_discard_previous_review_and_exports(field, label, stage):
+    app = example_app()
+    generate_example(app)
+    if stage in ("approved", "exported"):
+        find(app.checkbox, "Revisei o relatório e a identificação de todos os equipamentos e aprovo a emissão.").check().run()
+    if stage == "exported":
+        with patch("redator.documents.convert_pdf", return_value=b"%PDF-ficticio"):
+            find(app.button, "Preparar documentos revisados").click().run()
+        assert "docx" in app.session_state["exports"] and "pdf" in app.session_state["exports"]
+    find(app.text_input, label).set_value("Identificação Atualizada").run()
+    assert not app.exception and not app.error
+    assert app.session_state["approved"] is False
+    for key in ("draft", "review_text", "report_case", "exports", "source_fingerprint"):
+        assert key not in app.session_state
+    assert not app.get("download_button")
+    assert not any(b.label == "Preparar documentos revisados" for b in app.button)
+    generate_example(app)
+    assert getattr(app.session_state["report_case"], field) == "Identificação Atualizada"
+    assert find(app.button, "Preparar documentos revisados").disabled
+
+
+@pytest.mark.parametrize("mode", ["Objetivo", "Detalhado"])
+def test_edited_identification_reaches_word_and_pdf_conversion_locally(mode):
+    app = example_app()
+    find(app.text_input, "Cidade").set_value("Cidade de Validação").run()
+    find(app.text_input, "Responsável pelo relatório").set_value("Avaliadora de Validação").run()
+    find(app.radio, "Formato").set_value(mode).run()
+    generate_example(app)
+    case = app.session_state["report_case"]
+    assert case.report_date == date.today()
+    assert any(c.value.startswith(case.responsible) for c in app.caption)
+    find(app.checkbox, "Revisei o relatório e a identificação de todos os equipamentos e aprovo a emissão.").check().run()
+    with patch("redator.documents.convert_pdf", return_value=b"%PDF-ficticio") as convert:
+        find(app.button, "Preparar documentos revisados").click().run()
+    assert not app.exception and not app.error
+    exports = app.session_state["exports"]
+    convert.assert_called_once_with(exports["docx"])
+    lines = [p.text for p in Document(BytesIO(convert.call_args.args[0])).paragraphs]
+    assert format_location_date("Cidade de Validação", date.today()) in lines
+    assert "Avaliadora de Validação" in lines
+    assert demo_case().responsible not in lines
+    assert not any(line.startswith(demo_case().city + ",") for line in lines)
+    assert exports["pdf"] == b"%PDF-ficticio"
+    assert len(app.get("download_button")) == 2
 
 
 def support_ready_app():
@@ -180,6 +258,8 @@ def test_normal_generation_has_no_test_or_privacy_confirmation_and_preview_is_ad
 def test_normal_generation_keeps_registration_out_of_the_api_request():
     app = support_ready_app()
     find(app.text_input, "Solicitante").set_value("Cadastro Fictício Separado").run()
+    find(app.text_input, "Cidade").set_value("Cidade de Validação").run()
+    find(app.text_input, "Responsável pelo relatório").set_value("Avaliadora de Validação").run()
     client = Mock()
     client.responses.create.return_value = SimpleNamespace(status="completed", output_text=json.dumps({
         "paragraphs": ["Texto técnico fictício para revisão."], "complaints": [], "notes": []}))
@@ -192,13 +272,14 @@ def test_normal_generation_keeps_registration_out_of_the_api_request():
     assert set(payload) == {"equipamentos", "avaliacao", "formato"}
     assert all(set(item) == {"alias", "tipo", "lado", "referencia"} for item in payload["equipamentos"])
     case = app.session_state["report_case"]
-    for private in (case.requester, case.department, case.responsible, *(i.model for i in case.identities), *(i.serial for i in case.identities)):
-        assert private not in request["input"]
+    for private in (case.requester, case.department, case.city, case.responsible, *(i.model for i in case.identities), *(i.serial for i in case.identities)):
+        assert private not in json.dumps(request, ensure_ascii=False)
     assert case.requester == "Cadastro Fictício Separado"
+    assert case.city == "Cidade de Validação" and case.responsible == "Avaliadora de Validação"
     assert find(app.button, "Preparar documentos revisados").disabled
 
 
-@pytest.mark.parametrize("identifier", ["requester", "model_E1", "serial_E1", "email", "cpf", "phone"])
+@pytest.mark.parametrize("identifier", ["requester", "city", "responsible", "model_E1", "serial_E1", "email", "cpf", "phone"])
 def test_suspected_identifiers_block_generation_and_support_before_sending(identifier):
     app = support_ready_app()
     examples = {"email": "pessoa@example.com", "cpf": "123.456.789-00", "phone": "(11) 99999-1234"}
@@ -246,6 +327,10 @@ def test_local_demo_generates_without_confirmations_or_external_clients():
         generate_example(app)
         generation_client.assert_not_called()
         support_client.assert_not_called()
+    case = app.session_state["report_case"]
+    sample = demo_case()
+    assert case.city == sample.city and case.responsible == sample.responsible
+    assert case.report_date == date.today()
     assert not app.sidebar.code
     assert any("Demonstração da redação sem chamadas à IA" in caption.value for caption in app.sidebar.caption)
 

@@ -30,6 +30,28 @@ cobre requisições e respostas simuladas e os formatos de áudio; não confirma
 dos modelos ou a qualidade de reconhecimento de fala. A redação real pela IA também não foi chamada.
 Somente Windows foi validado nesta etapa.
 
+## Cidade e responsável editáveis
+
+Melhoria validada em 24/11/2026: **153 testes aprovados**, com rede externa bloqueada e sem
+chamadas reais à API. A suíte também impede que o aplicativo recarregue credenciais do `.env`.
+Os testes cobrem valores iniciais do perfil, edição apenas na sessão, data automática, exemplo
+fictício, inserção da identificação no DOCX e encaminhamento desse mesmo DOCX ao conversor PDF.
+Alterar cidade ou responsável após geração, aprovação ou exportação remove o resultado anterior
+e exige nova geração e aprovação, nos formatos Objetivo e Detalhado.
+
+Requisições simuladas de redação e ajuda técnica confirmam que cidade e responsável não integram
+o conteúdo enviado à IA. A proteção local também bloqueia a cidade cadastrada quando inserida
+no relato ou nos esclarecimentos; a proteção existente do responsável foi preservada.
+
+Uma exportação real pela interface produziu DOCX e PDF com identificação fictícia editada,
+usando o Word instalado. O texto do PDF foi conferido e sua única página foi renderizada e
+revisada visualmente, sem cortes ou sobreposições. Os artefatos ficam em
+`local/validacao-identificacao/`, fora do versionamento.
+
+A auditoria adicional das fontes apontou somente o `.env` local preexistente como arquivo
+indevido para distribuição. Ele não é versionado e não foi alterado; deve continuar fora de
+qualquer pacote de publicação. Não houve alteração de dependências, commit, push ou publicação.
+
 Permanecem para revisão antes de publicar: titularidade do código reaproveitado, escolha da licença,
 obrigações das dependências e das bibliotecas nativas, e todo material de demonstração destinado à
 divulgação. O responsável autorizou explicitamente o envio privado nesta etapa. Isso não autoriza alterar a visibilidade para pública.

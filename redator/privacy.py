@@ -33,7 +33,7 @@ def assert_deidentified(case: Case, payload: dict):
                 if len(joined) >= len(token):
                     break
         return False
-    forbidden = [case.requester, case.department, case.responsible]
+    forbidden = [case.requester, case.department, case.city, case.responsible]
     forbidden += [part for part in re.findall(r"[\wÀ-ÿ]{4,}", case.requester)
                   if normalize(part) not in {"solicitante", "cliente", "teste", "exemplo"}]
     # O nome completo e o primeiro nome continuam protegidos. Um sobrenome isolado
@@ -54,7 +54,7 @@ def assert_deidentified(case: Case, payload: dict):
         phrase_match = phrase and f" {phrase} " in f" {folded} "
         code_match = compact_match(token) if token else False
         if token and token not in {"naoinformado", "naoseaplica"} and (phrase_match or code_match):
-            raise ValueError("A descrição contém identificação cadastrada. Retire nomes, modelos e séries antes de enviar.")
+            raise ValueError("A descrição contém identificação cadastrada. Retire nomes, cidade, modelos e séries antes de enviar.")
     patterns = [r"[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}",
                 r"\b\d{3}[. ]?\d{3}[. ]?\d{3}[- ]?\d{2}\b",
                 r"(?:\+55\s*)?\(?\d{2}\)?[\s-]*9?\d{4}[\s-]*\d{4}\b",

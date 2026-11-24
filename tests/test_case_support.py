@@ -21,7 +21,7 @@ def test_common_surname_word_does_not_block_a_technical_sentence():
     assert assert_deidentified(case, payload) == payload
 
 
-@pytest.mark.parametrize("leak", ["Avaliador", "Avaliador Claro", "Prof. Avaliador Claro", "Solicitante Simulado", "Fictício A", "SINT-001", "S I N T 0 0 1"])
+@pytest.mark.parametrize("leak", ["Avaliador", "Avaliador Claro", "Prof. Avaliador Claro", "Cidade Exemplo", "Solicitante Simulado", "Fictício A", "SINT-001", "S I N T 0 0 1"])
 def test_identifiers_still_block_before_support_api(leak):
     case = replace(three_device_case(), responsible="Prof. Avaliador Claro")
     client = client_for({})
@@ -50,8 +50,8 @@ def test_support_keeps_uncertainty_and_sends_only_technical_data_and_answers():
     assert request["store"] is False and "tools" not in request and "previous_response_id" not in request
     data = json.loads(request["input"])
     assert data["esclarecimentos"] == answers and set(data) == {"equipamentos", "avaliacao", "esclarecimentos"}
-    for private in (case.requester, case.department, case.responsible, case.identities[0].model, case.identities[0].serial):
-        assert private not in request["input"]
+    for private in (case.requester, case.department, case.city, case.responsible, case.identities[0].model, case.identities[0].serial):
+        assert private not in json.dumps(request, ensure_ascii=False)
 
 
 @pytest.mark.parametrize("data", [

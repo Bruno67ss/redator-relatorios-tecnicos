@@ -1,10 +1,13 @@
 """Impede uso acidental de credenciais e de rede externa durante toda a suíte."""
 import ipaddress
 import socket
+import dotenv
 import pytest
 
 @pytest.fixture(autouse=True)
 def offline_environment(monkeypatch):
+    # O app usa override=True: não permita recarregar credenciais reais do .env.
+    monkeypatch.setattr(dotenv, "load_dotenv", lambda *args, **kwargs: False)
     monkeypatch.setenv("OPENAI_API_KEY", "")
     monkeypatch.setenv("RELATORIO_TEMPLATE", "")
     monkeypatch.setenv("STREAMLIT_BROWSER_GATHER_USAGE_STATS", "false")

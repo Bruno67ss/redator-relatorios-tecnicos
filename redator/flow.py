@@ -42,6 +42,7 @@ def load_example(state):
     state["equipment_ids"] = [i.alias for i in sample.identities]
     state["next_equipment"] = len(sample.identities) + 1
     state["requester"], state["department"] = sample.requester, sample.department
+    state["city"], state["responsible"] = sample.city, sample.responsible
     for identity, technical in zip(sample.identities, sample.technical):
         for name in ("kind", "side", "model", "serial"):
             value = getattr(identity, name)

@@ -24,6 +24,8 @@ load_dotenv(ROOT / ".env", override=True)
 st.set_page_config(page_title="Redator de Relatórios Técnicos", page_icon="🛠️", layout="wide")
 initialize(st.session_state)
 profile = load_profile(ROOT)
+st.session_state.setdefault("city", profile["city"])
+st.session_state.setdefault("responsible", profile["responsible"])
 
 
 def invalidate_review():
@@ -65,8 +67,11 @@ st.header("1. Identificação")
 a, b = st.columns(2)
 requester = a.text_input("Solicitante", key="requester", max_chars=150)
 department = b.text_input("Setor", key="department", max_chars=150)
+a, b = st.columns(2)
+city = a.text_input("Cidade", key="city", max_chars=150)
+responsible = b.text_input("Responsável pelo relatório", key="responsible", max_chars=150)
 report_date = date.today()
-st.caption(f"{profile['city']} · {report_date:%d/%m/%Y} · {profile['responsible']}")
+st.caption(f"Data do relatório: {report_date:%d/%m/%Y}")
 
 st.header("2. Equipamentos e avaliação")
 identities = []
@@ -95,7 +100,7 @@ for note in terminology_notes(narrative):
     st.warning(note)
 
 empty = tuple(TechnicalItem(i.alias, "", "", "", "") for i in identities)
-intake_case = Case(requester, department, profile["city"], report_date, profile["responsible"], tuple(identities), empty)
+intake_case = Case(requester, department, city, report_date, responsible, tuple(identities), empty)
 context_data = {"case": intake_case.fingerprint("intake"), "narrative": narrative,
                 "provider": provider, "model": model, "mode": mode,
                 "closing": profile["closing"], "role": profile["role"]}
@@ -116,7 +121,7 @@ if provider == "OpenAI":
         st.warning(str(exc))
     with advanced_ai:
         st.caption("Conferir o texto que será enviado à IA (opcional)")
-        st.caption("Somente tipo, lado e avaliação técnica. Solicitante, setor, responsável, modelos, séries e áudio não são enviados.")
+        st.caption("Somente tipo, lado e avaliação técnica. Solicitante, setor, cidade, responsável, modelos, séries e áudio não são enviados.")
         st.code(json.dumps(payload, ensure_ascii=False, indent=2), language="json")
 render_case_support(intake_case, narrative, context, provider, can_send,
                     os.getenv("OPENAI_API_KEY", ""), model)
@@ -148,7 +153,7 @@ if "draft" in st.session_state:
     reviewed = st.text_area("Texto final editável", key="review_text", height=440, on_change=invalidate_review)
     for note in terminology_notes(reviewed):
         st.warning(note)
-    st.caption(profile["responsible"] + (" · " + profile["role"] if profile["role"] else ""))
+    st.caption(report_case.responsible + (" · " + profile["role"] if profile["role"] else ""))
     try:
         validate_review(reviewed, mode)
         valid = True
